@@ -1,0 +1,88 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
+        "plugin:import/recommended",
+        "plugin:react/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react"
+    ],
+    "rules": {
+        // Relaxing this since sometimes props spreading in unavoidable.
+    "react/jsx-props-no-spreading": "warn",
+    // Only allow React in .jsx/.tsx files.
+    // By default, pretty sure this is .jsx only.
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [".tsx"]
+      }
+    ],
+    // By default airbnb disallows return assignments altogether. We"ve updated
+    // it to allow return assignments when wrapped in parenthesis. Using
+    // parenthesis makes it clear enough to see that something is being both
+    // assigned and returned, and it also allows for some beautiful one-liners
+    // while doing reductions.
+    "no-return-assign": ["error", "except-parens"],
+    "import/prefer-default-export": "off",
+    // For standard js/ts files, requires that no file extension is used in
+    // require/import statements. For "non-standard" files, requires that the
+    // import extension is used explicitly.
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "cjs": "never",
+        "js": "never",
+        "jsx": "never",
+        "mjs": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    // Prop types provide no value in TypeScript.
+    // Instead, we"ll rely on regular TS types.
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "@typescript-eslint/no-extra-semi": "off",
+    // This standard eslint rule breaks TypeScript.
+    // Disabling it in favor of the @typescript-eslint alternative.
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+    // This standard eslint rule breaks TypeScript.
+    // Disabling it in favor of the @typescript-eslint alternative.
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": "error",
+    // Discourages the use of `any`.
+    "@typescript-eslint/no-explicit-any": "error",
+    // Requires the developer to add function return types.
+    // This makes it clear as to what is being returned from a function.
+    "@typescript-eslint/explicit-function-return-type": "error",
+    // Team style preference for type/interface style.
+    "react/react-in-jsx-scope": "off",
+    "react/function-component-definition": "off",
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none"
+        },
+        "singleline": {
+          "delimiter": "semi"
+        }
+      }
+    ]
+    }
+}
