@@ -1,14 +1,11 @@
 import React from 'react'
 import SideBar from '~components/SideBar'
-import DashBoardPage from '~tabs/dashboard'
 
-function OptionsPage() {
+export default function PinProtectionPage() {
   return (
     <div className='flex flex-row w-full'>
       <SideBar />
-      <DashBoardPage />
+      <div>This is the Pin Protection view</div>
     </div>
   )
 }
-
-export default OptionsPage
