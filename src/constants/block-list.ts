@@ -1,0 +1,18 @@
+export const blockList = [
+  'facebook.com',
+  'instagram.com',
+  'twitter.com',
+  'x.com',
+  'pinterest.com',
+  'netflix.com',
+  'tiktok.com',
+  'youtube.com',
+  'amazon.com',
+  'jumia.com',
+  'konga.com',
+  'jiji.ng',
+  'tumblr.com',
+  'quora.com',
+  'linkedin.com',
+  'reddit.com',
+]
