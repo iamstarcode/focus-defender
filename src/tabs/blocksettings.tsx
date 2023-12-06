@@ -1,11 +1,16 @@
 import React from 'react'
 import SideBar from '~components/SideBar'
+import AddWebsite from '~components/blockSettings/AddWebsite'
+
 
 export default function BlockSettingsPage() {
   return (
     <div className='flex flex-row w-full'>
       <SideBar />
-      <div>This is the Block Setting View </div>
+      <div className='w-[50%] m-6'>
+        <AddWebsite />
+      </div>
+
     </div>
   )
 }
