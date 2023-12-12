@@ -53,7 +53,8 @@ const BlockScreen = () => {
     
       handleBlockScreenStyle(overflowYStyle, shouldHideBlockscreen)
     }, [blockedWebsites])
-  
+    
+    const handleUnblock = () => handleBlockScreenStyle("scroll", true)
 
   if (hide) return null
 
@@ -64,7 +65,7 @@ const BlockScreen = () => {
           <div></div>
           <div className="flex space-x-2">
             <img
-              onClick={() => handleBlockScreenStyle("scroll", true)}
+              onClick={handleUnblock}
               className="w-10 h-10 cursor-pointer"
               src={icon}
               alt="focus defender icon"
