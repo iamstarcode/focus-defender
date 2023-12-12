@@ -11,6 +11,7 @@ import { Storage } from "@plasmohq/storage"
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
 import { Switch } from "~components/ui/switch"
+import { blockUrl, getBlockedWebsites } from "~utils/block"
 
 export const getStyle = () => {
   const style = document.createElement("style")
@@ -38,28 +39,8 @@ function IndexPopup() {
   }, [])
 
   useEffect(() => {
-    storage
-      .get("blockedWebsites")
-      .then((websites) => setBlockedWebsites(websites || []))
+      getBlockedWebsites(setBlockedWebsites)
   }, [])
-  const extractHostname = () => {
-    const isValidUrl = currentUrl.match(
-      /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
-    )
-    const hasProtocol = /^(https?|ftp):\/\//i.test(currentUrl)
-    if (!isValidUrl || blockedWebsites.includes(currentUrl)) return
-    if (hasProtocol) {
-      return new URL(currentUrl).hostname.replace(/^www\./i, "")
-    }
-    return currentUrl.replace(/^www\./i, "")
-  }
-
-  const blockUrl = async () => {
-    const extractedUrl = extractHostname()
-    if (!extractedUrl) return
-    setBlockedWebsites([extractedUrl, ...blockedWebsites])
-    await storage.set("blockedWebsites", [extractedUrl, ...blockedWebsites])
-  }
   return (
     <div className="w-[420px] h-[330px] px-16 py-8 rounded-[10px] flex flex-col space-y-8">
       <div>
@@ -90,7 +71,7 @@ function IndexPopup() {
           <p className="text-sm font-medium">Block All Pages</p>
           <Switch />
         </div>
-        <Button onClick={blockUrl}>Block URL</Button>
+        <Button onClick={() => blockUrl(currentUrl, blockedWebsites, setBlockedWebsites)}>Block URL</Button>
       </div>
     </div>
   )
