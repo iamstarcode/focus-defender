@@ -2,6 +2,10 @@ import icon from "data-base64:~/assets/icon.png"
 import cssText from "data-text:~style.css"
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
 import { useEffect, useState } from "react"
+import { Storage } from "@plasmohq/storage"
+
+const storage = new Storage()
+
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
@@ -18,20 +22,42 @@ export const getStyle = () => {
 export const getOverlayAnchor: PlasmoGetInlineAnchor = async () =>
   document.querySelector(`body`)
 
-const BlockScreen = () => {
-  const [hide, setHide] = useState(false)
-
-  useEffect(() => {
-    //TODO every site is not going to be block by default, this is just an illux
-    document.body.style.overflowY = "hidden"
-  }, [])
-
-  const handleUnblock = () => {
-    document.body.style.overflowY = "scroll"
-    setHide(true)
+  export const isCurrentUrlBlocked = (currentUrl: string, blockedUrl: string) => {
+    const blockedUrlRegex = new RegExp(blockedUrl?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    return blockedUrlRegex.test(currentUrl);
   }
 
+const BlockScreen = () => {
+  const [hide, setHide] = useState<boolean>()
+  const [blockedWebsites, setBlockedWebsites] = useState<any>([])
+
+  const handleBlockScreenStyle = (overflowYStyle: string, hide: boolean) => {
+    document.body.style.overflowY = overflowYStyle
+    setHide(hide)
+  }
+
+  useEffect(() => {
+    storage.get("blockedWebsites").then(
+      (websites) => setBlockedWebsites(websites || [])
+    )
+  }, [])
+  
+  useEffect(() => {
+      const currentUrl = window.location.hostname.replace(/^www\./i, "");
+      const filteredBlockedWebsites = blockedWebsites.filter(Boolean);
+      const isWebsiteBlocked = filteredBlockedWebsites.some((blockedUrl: string) => isCurrentUrlBlocked(currentUrl, blockedUrl));
+      
+      const overflowYStyle = isWebsiteBlocked ? "hidden" : "scroll";
+      const shouldHideBlockscreen = !isWebsiteBlocked;
+      
+    
+      handleBlockScreenStyle(overflowYStyle, shouldHideBlockscreen)
+    }, [blockedWebsites])
+    
+    const handleUnblock = () => handleBlockScreenStyle("scroll", true)
+
   if (hide) return null
+
   return (
     <>
       <div className="w-screen h-screen p-12 text-black bg-white">
@@ -39,7 +65,7 @@ const BlockScreen = () => {
           <div></div>
           <div className="flex space-x-2">
             <img
-              onClick={() => handleUnblock()}
+              onClick={handleUnblock}
               className="w-10 h-10 cursor-pointer"
               src={icon}
               alt="focus defender icon"

@@ -1,39 +1,46 @@
 import cssText from "data-text:~style.css"
 import { useEffect, useState } from "react"
 
-import FocusDefenderIcon from "~assets/icon.png"
 import SettingsIcon from "~/assets/settings_icon.png"
+import FocusDefenderIcon from "~assets/icon.png"
 
 import "./style.css"
+
+import { Storage } from "@plasmohq/storage"
 
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
 import { Switch } from "~components/ui/switch"
+import { blockUrl, getBlockedWebsites } from "~utils/block"
 
 export const getStyle = () => {
   const style = document.createElement("style")
   style.textContent = cssText
   return style
 }
+const storage = new Storage()
 
 function IndexPopup() {
   const [currentUrl, setCurrentUrl] = useState<string>("")
+  const [blockedWebsites, setBlockedWebsites] = useState<any>([])
 
-  const getCurrentUrl: () => Promise<void> =  async () => {
+  const getCurrentUrl: () => Promise<void> = async () => {
     const queryInfo: chrome.tabs.QueryInfo = {
       active: true,
-      currentWindow: true,
-    };
-    
-    const [tab] = await chrome.tabs.query(queryInfo);
-    setCurrentUrl(tab.url)
+      currentWindow: true
+    }
+
+    const [tab] = await chrome.tabs.query(queryInfo)
+    setCurrentUrl(new URL(tab.url).hostname)
   }
 
   useEffect(() => {
     getCurrentUrl()
-  }, [currentUrl])
-  
+  }, [])
 
+  useEffect(() => {
+      getBlockedWebsites(setBlockedWebsites)
+  }, [])
   return (
     <div className="w-[420px] h-[330px] px-16 py-8 rounded-[10px] flex flex-col space-y-8">
       <div>
@@ -46,23 +53,25 @@ function IndexPopup() {
             />
             <h2 className="text-2xl font-medium mt-[-3px]">FocusDefender</h2>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => window.open('options.html')}>
-          <img
-            src={SettingsIcon}
-            alt="settings_icon"
-            className="w-6 h-6"
-          />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => window.open("options.html")}>
+            <img src={SettingsIcon} alt="settings_icon" className="w-6 h-6" />
           </Button>
         </div>
       </div>
       <div className="flex flex-col space-y-4">
         <p className="text-lg font-medium">Domain</p>
-        <Input defaultValue={currentUrl} />
+        <Input
+          onChange={(event) => setCurrentUrl(event.target.value)}
+          defaultValue={currentUrl}
+        />
         <div className="flex items-start space-x-3">
           <p className="text-sm font-medium">Block All Pages</p>
           <Switch />
         </div>
-        <Button>Block URL</Button>
+        <Button onClick={() => blockUrl(currentUrl, blockedWebsites, setBlockedWebsites)}>Block URL</Button>
       </div>
     </div>
   )
