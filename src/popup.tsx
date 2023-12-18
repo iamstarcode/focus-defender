@@ -11,35 +11,49 @@ import { Storage } from "@plasmohq/storage"
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
 import { Switch } from "~components/ui/switch"
-import { blockUrl, getBlockedWebsites } from "~utils/block"
+import {
+  blockUrl,
+  extractHostname,
+  getBlockedWebsites,
+  getCurrentTabUrl,
+  isValidURL
+} from "~utils/block"
 
 export const getStyle = () => {
   const style = document.createElement("style")
   style.textContent = cssText
   return style
 }
-const storage = new Storage()
 
 function IndexPopup() {
   const [currentUrl, setCurrentUrl] = useState<string>("")
   const [blockedWebsites, setBlockedWebsites] = useState<any>([])
 
-  const getCurrentUrl: () => Promise<void> = async () => {
-    const queryInfo: chrome.tabs.QueryInfo = {
-      active: true,
-      currentWindow: true
-    }
+  const getCurrentUrl: () => Promise<string> = async () => {
+    const url = await getCurrentTabUrl()
+    setCurrentUrl(url)
+    return url
+  }
 
-    const [tab] = await chrome.tabs.query(queryInfo)
-    setCurrentUrl(new URL(tab.url).hostname)
+  const reloadCurrentPage = async () => {
+    const urlToBeBlocked = extractHostname(currentUrl)
+    const currentTabUrl = await getCurrentTabUrl()
+    if (urlToBeBlocked === currentTabUrl) {
+      chrome.tabs.reload()
+    }
+    window.close()
+  }
+  const disableBlock = () => {
+    const match = extractHostname(currentUrl)
+    return blockedWebsites.includes(match) || !isValidURL(currentUrl)
   }
 
   useEffect(() => {
-    getCurrentUrl()
+     getCurrentUrl()
   }, [])
 
   useEffect(() => {
-      getBlockedWebsites(setBlockedWebsites)
+    getBlockedWebsites(setBlockedWebsites)
   }, [])
   return (
     <div className="w-[420px] h-[330px] px-16 py-8 rounded-[10px] flex flex-col space-y-8">
@@ -71,7 +85,18 @@ function IndexPopup() {
           <p className="text-sm font-medium">Block All Pages</p>
           <Switch />
         </div>
-        <Button onClick={() => blockUrl(currentUrl, blockedWebsites, setBlockedWebsites)}>Block URL</Button>
+        <Button
+          disabled={disableBlock()}
+          onClick={() =>
+            blockUrl(
+              currentUrl,
+              blockedWebsites,
+              setBlockedWebsites,
+              reloadCurrentPage
+            )
+          }>
+          Block URL
+        </Button>
       </div>
     </div>
   )
