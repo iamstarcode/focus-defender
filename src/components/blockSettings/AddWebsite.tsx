@@ -73,8 +73,8 @@ if(isValidURL(website) === true) {
     setWebsite("")
   }
   return (
-    <div className="mt-10 ml-5">
-      <h3 className="text-xl font-medium my-5">Blocked Websites</h3>
+    <div className="mt-10 ">
+      <h3 className="text-xl font-bold my-5">Blocked Websites</h3>
       <div className="flex w-full justify-between">
         <div className="border-2 border-primary w-[50%] p-6 rounded-md">
           {blockedWebsites?.length !== 0 ? (
