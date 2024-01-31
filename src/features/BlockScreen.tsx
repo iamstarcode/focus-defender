@@ -22,11 +22,6 @@ export const getStyle = () => {
 export const getOverlayAnchor: PlasmoGetInlineAnchor = async () =>
   document.querySelector(`body`)
 
-  export const isCurrentUrlBlocked = (currentUrl: string, blockedUrl: string) => {
-    const blockedUrlRegex = new RegExp(blockedUrl?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-    return blockedUrlRegex.test(currentUrl);
-  }
-
 const BlockScreen = () => {
   const [hide, setHide] = useState<boolean>()
   const [blockedWebsites, setBlockedWebsites] = useState<any>([])
@@ -45,7 +40,7 @@ const BlockScreen = () => {
   useEffect(() => {
       const currentUrl = window.location.hostname.replace(/^www\./i, "");
       const filteredBlockedWebsites = blockedWebsites.filter(Boolean);
-      const isWebsiteBlocked = filteredBlockedWebsites.some((blockedUrl: string) => isCurrentUrlBlocked(currentUrl, blockedUrl));
+      const isWebsiteBlocked = filteredBlockedWebsites.includes(currentUrl)
       
       const overflowYStyle = isWebsiteBlocked ? "hidden" : "scroll";
       const shouldHideBlockscreen = !isWebsiteBlocked;
