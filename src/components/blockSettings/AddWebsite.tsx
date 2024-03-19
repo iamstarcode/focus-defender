@@ -99,7 +99,7 @@ if(isValidURL(website) === true) {
         </div>
         <Dialog>
           <DialogTrigger>
-            <Button variant="menu" className="py-6 px-8 ">
+            <Button variant="menu" className="py-6 px-8">
               <svg
                 width="30"
                 height="30"
