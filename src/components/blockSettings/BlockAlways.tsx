@@ -2,10 +2,13 @@ import React, {useState} from 'react'
 
 import { Button } from '~components/ui/button'
 import { Switch } from '~components/ui/switch'
+import { useActivateExtension } from '~hooks/useActivateExtension'
 
 export default function BlockAlways() {
   const [isScheduled, setIsScheduled] = useState(false)
   const [isPersonalMode, setIsPersonalMode] = useState(false)
+
+  const { isExtensionActive, handleActivateExtension } = useActivateExtension()
 
   const handleScheduled = () => {
     setIsScheduled(!isScheduled)
@@ -24,13 +27,14 @@ export default function BlockAlways() {
         <p className={`text-sm font-bold  ${isScheduled ? 'text-primary': 'text-gray-500'}`}>Schedule</p>
       </div>
       <Button
-        aria-label="activate"
+        aria-label="activate-extension"
         type="button"
         variant="default"
         size="default"
         className="px-10"
+        onClick={handleActivateExtension}
       >
-        Activate
+        {isExtensionActive ? "Deactivate" : "Activate"}
       </Button>
     </div>
     {/* Work Mode Switch */}

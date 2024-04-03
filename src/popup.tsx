@@ -11,6 +11,8 @@ import { Storage } from "@plasmohq/storage"
 import { Button } from "~components/ui/button"
 import { Input } from "~components/ui/input"
 import { Switch } from "~components/ui/switch"
+import { useActivateExtension } from '~hooks/useActivateExtension'
+
 import {
   blockUrl,
   extractHostname,
@@ -29,6 +31,8 @@ function IndexPopup() {
   const [currentUrl, setCurrentUrl] = useState<string>("")
   const [blockedWebsites, setBlockedWebsites] = useState<any>([])
 
+  const { isExtensionActive } = useActivateExtension()
+
   const getCurrentUrl: () => Promise<string> = async () => {
     const url = await getCurrentTabUrl()
     setCurrentUrl(url)
@@ -45,7 +49,11 @@ function IndexPopup() {
   }
   const disableBlock = () => {
     const match = extractHostname(currentUrl)
-    return blockedWebsites.includes(match) || !isValidURL(currentUrl)
+    return (
+      blockedWebsites.includes(match) ||
+      !isValidURL(currentUrl) ||
+      !isExtensionActive
+    )
   }
 
   useEffect(() => {
